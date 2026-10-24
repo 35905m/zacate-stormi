@@ -30,3 +30,7 @@
  html.inv-printing .inv-it .ex input{border:0;width:90px}html.inv-printing .inv-pr{display:block;padding:8px;font-size:11pt}
  html.inv-printing *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+.inv-send{display:flex;flex-wrap:wrap;gap:8px;padding:10px 16px}.inv-send button{flex:1 1 200px;border:0;border-radius:10px;padding:14px;font-weight:800;font-size:1rem;cursor:pointer}
+.inv-send .cta{background:#ffc300;color:#0b2545}.inv-send .sec{background:#0b2545;color:#fff}.inv-ok{flex-basis:100%;margin:4px 0 0;background:#e6f6ea;color:#14532d;border-radius:8px;padding:10px;font-weight:600}
+@media print{.inv-send{display:none!important}}html.inv-printing .inv-send{display:none!important}
+.inv-send label.em[hidden]{display:none}.inv-send label.em{flex-basis:100%;display:flex;flex-direction:column;font-weight:700;font-size:.9rem;color:#0b2545}.inv-send .inv-em{margin-top:4px;padding:12px;font-size:1rem;border:2px solid #0b2545;border-radius:10px;width:100%;box-sizing:border-box;color:#111;background:#fff}
