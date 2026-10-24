@@ -1,4 +1,7 @@
-// Tool Shield interactive inventory. State is saved in localStorage. Nothing is sent over the network; 'Send' opens the lead's own email/text app (mailto:/sms:).
+// Tool Shield interactive inventory. State is saved in localStorage.
+// SEND_MODE: 'hook' = POST the list to the Tool Shield inventory Zapier hook (emails the lead from Nick's Outlook, CC the agent), mailto: only if the POST fails.
+//            'mailto' = open the lead's own email app (current fallback while the Outlook connection is being reconnected).
+var TS_SEND_MODE='mailto',TS_INV_HOOK='https://hooks.zapier.com/hooks/catch/13623300/CQga7EMENaBrf5fpa/';
 (function(){
 var S=document.getElementById('inv'),D=document.getElementById('inv-data'),ty=document.getElementById('ty');if(!S||!D)return;
 var d=JSON.parse(D.textContent),L=d.t,KEY='ts-inv-'+d.page,st={};try{st=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){}
@@ -34,18 +37,22 @@ var LK='ts-lead';function lead(){try{return JSON.parse(localStorage.getItem(LK))
 document.addEventListener('submit',function(e){var f=e.target;if(!f||!f.elements)return;var g=function(n){var x=f.elements[n];return x&&x.value?String(x.value).trim():'';};
  var o={name:g('name'),email:g('email'),phone:g('phone')};if(o.name||o.email||o.phone){try{localStorage.setItem(LK,JSON.stringify(o));}catch(er){}}},true);
 function listText(){var lines=[],tot=0,k=0,ld=lead();lines.push(L.hi,'');
- body.querySelectorAll('details.inv-cat').forEach(function(dc){var rows=[];dc.querySelectorAll('.inv-it').forEach(function(r){if(!r.querySelector('input[type=checkbox]').checked)return;
-  var q=+r.querySelector('.q').value||0,v=+r.querySelector('.vv').value||0;k++;tot+=q*v;rows.push('[x] '+r.querySelector('.nm').textContent+' | '+L.qty_+' '+q+' | '+fmt.format(v)+(q>1?' ea = '+fmt.format(q*v):''));});
-  if(rows.length){lines.push(dc.querySelector('summary').firstChild.textContent.toUpperCase());lines=lines.concat(rows);lines.push('');}});
+ var cj=[],hh='';body.querySelectorAll('details.inv-cat').forEach(function(dc){var rows=[],ci=[];dc.querySelectorAll('.inv-it').forEach(function(r){if(!r.querySelector('input[type=checkbox]').checked)return;
+  var q=+r.querySelector('.q').value||0,v=+r.querySelector('.vv').value||0;k++;tot+=q*v;var nm=r.querySelector('.nm').textContent;ci.push({n:nm,q:String(q),v:fmt.format(q*v)+(q>1?' ('+fmt.format(v)+' ea)':'')});rows.push('[x] '+nm+' | '+L.qty_+' '+q+' | '+fmt.format(v)+(q>1?' ea = '+fmt.format(q*v):''));});
+  if(rows.length){var cn=dc.querySelector('summary').firstChild.textContent;cj.push({cat:cn,items:ci});hh+='<tr><th colspan="3" align="left">'+esc(cn)+'</th></tr>'+ci.map(function(o){return '<tr><td>'+esc(o.n)+'</td><td>'+o.q+'</td><td align="right">'+esc(o.v)+'</td></tr>';}).join('');lines.push(cn.toUpperCase());lines=lines.concat(rows);lines.push('');}});
  lines.push(L.it+': '+k,L.tl+': '+fmt.format(tot));
  if(ld.name||ld.phone||ld.email)lines.push('',L.fr+': '+[ld.name,ld.phone,ld.email].filter(Boolean).join(' · '));
- return {txt:lines.join('\n'),tot:fmt.format(tot),ld:ld};}
+ return {txt:lines.join('\n'),tot:fmt.format(tot),ld:ld,k:k,cj:cj,html:'<table>'+hh+'</table>'};}
 function fillEm(){var e=lead().email||'';S.querySelectorAll('.inv-em').forEach(function(i){if(!i.value)i.value=e;});}
 if(ty)new MutationObserver(function(){setTimeout(fillEm,0);}).observe(ty,{attributes:true,attributeFilter:['hidden']});fillEm();
 var MD=S.querySelector('.inv-mod');if(MD){MD.querySelector('.x').addEventListener('click',function(){MD.hidden=true;});MD.addEventListener('click',function(e){if(e.target===MD)MD.hidden=true;});}
 function ok(m){S.querySelectorAll('.inv-ok').forEach(function(p){p.textContent=m;p.hidden=false;});}
-S.querySelectorAll('.snd').forEach(function(b){b.addEventListener('click',function(){var lb=b.parentNode.querySelector('label.em'),inp=lb.querySelector('.inv-em');if(lb.hidden){lb.hidden=false;if(!inp.value)inp.value=lead().email||'';b.textContent=L.go;inp.focus();return;}var em=(inp.value||'').trim();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){inp.focus();ok(L.need);return;}var ld0=lead();ld0.email=em;try{localStorage.setItem(LK,JSON.stringify(ld0));}catch(e){}S.querySelectorAll('.inv-em').forEach(function(i){i.value=em;});var x=listText(),to=em,cc='cc='+encodeURIComponent(d.em)+'&';var md=S.querySelector('.inv-mod');md.querySelector('.big').textContent=x.tot;md.querySelector('.msg').textContent=L.sent;md.hidden=false;md.querySelector('.x').focus();
- location.href='mailto:'+encodeURIComponent(to).replace('%40','@')+'?'+cc+'subject='+encodeURIComponent(L.subj.replace('{t}',x.tot))+'&body='+encodeURIComponent(x.txt);ok(L.sent);S.querySelectorAll('.inv-top').forEach(function(t){t.querySelector('label.em').hidden=true;t.querySelector('.snd').textContent=L.send;t.querySelector('.inv-ok').hidden=true;});});});
+S.querySelectorAll('.snd').forEach(function(b){b.addEventListener('click',function(){var lb=b.parentNode.querySelector('label.em'),inp=lb.querySelector('.inv-em');if(lb.hidden){lb.hidden=false;if(!inp.value)inp.value=lead().email||'';b.textContent=L.go;inp.focus();return;}var em=(inp.value||'').trim();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){inp.focus();ok(L.need);return;}var ld0=lead();ld0.email=em;try{localStorage.setItem(LK,JSON.stringify(ld0));}catch(e){}S.querySelectorAll('.inv-em').forEach(function(i){i.value=em;});var x=listText(),to=em,cc='cc='+encodeURIComponent(d.em)+'&';var md=S.querySelector('.inv-mod');md.querySelector('.big').textContent=x.tot;var mt=function(){md.querySelector('.msg').textContent=L.sent;ok(L.sent);location.href='mailto:'+encodeURIComponent(to).replace('%40','@')+'?'+cc+'subject='+encodeURIComponent(L.subj.replace('{t}',x.tot))+'&body='+encodeURIComponent(x.txt);};
+ md.hidden=false;md.querySelector('.x').focus();
+ if(TS_SEND_MODE==='hook'&&TS_INV_HOOK&&window.fetch&&window.URLSearchParams){md.querySelector('.msg').textContent=L.sentok;ok(L.sentok);
+  var P=new URLSearchParams({lead_email:em,lead_name:x.ld.name||'',lead_phone:x.ld.phone||'',agent:d.ag||'',agent_name:d.an||'',agent_email:d.em||'',trade:d.trade||'',language:d.lang||'',total:x.tot,items_count:String(x.k),list_text:x.txt,list_html:x.html,items_json:JSON.stringify(x.cj)});
+  fetch(TS_INV_HOOK,{method:'POST',mode:'no-cors',body:P}).catch(mt);}
+ else mt();S.querySelectorAll('.inv-top').forEach(function(t){t.querySelector('label.em').hidden=true;t.querySelector('.snd').textContent=L.send;t.querySelector('.inv-ok').hidden=true;});});});
 S.querySelectorAll('.sms2').forEach(function(b){b.addEventListener('click',function(){var x=listText(),ph=(x.ld.phone||'').replace(/[^\d+]/g,'');
  location.href='sms:'+ph+(/iP(hone|ad|od)/.test(navigator.userAgent)?'&':'?')+'body='+encodeURIComponent(L.subj.replace('{t}',x.tot)+'\n\n'+x.txt);ok(L.smsok);});});
 calc();
