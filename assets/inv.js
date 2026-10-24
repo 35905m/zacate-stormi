@@ -16,7 +16,9 @@ function calc(){var tot=0,k=0,per={};st={};
   r.classList.toggle('on',cb.checked);if(cb.checked){k++;tot+=q*v;per[r.dataset.c]=(per[r.dataset.c]||0)+1;}
   if(cb.checked||r.querySelector('.q').value!='1'||r.querySelector('.vv').defaultValue!=r.querySelector('.vv').value)st[r.dataset.id]={on:cb.checked,q:q,v:v};});
  body.querySelectorAll('summary small').forEach(function(s){var c=per[s.dataset.c]||0;s.textContent=c?('✔ '+c):'';s.closest('.inv-cat').classList.toggle('has',c>0);});
- cnt.textContent=k?L.cnt.replace('{n}',k).replace('{s}',k===1?'':L.pl):L.none;
+ var N=body.querySelectorAll('.inv-it').length,G=[25,50,100,N].filter(function(g){return g<=N;}),g=G.filter(function(x){return x>k;})[0],pv=G.filter(function(x){return x<=k;}).pop()||0;
+ cnt.textContent=(k?L.cnt.replace('{n}',k).replace('{s}',k===1?'':L.pl):L.none)+' · '+(g?L.ms.replace('{m}',g-k).replace('{g}',g):L.msd.replace('{g}',N));
+ var pb=S.querySelector('.pg i');if(pb){pb.style.width=(g?Math.round(100*(k-pv)/(g-pv)):100)+'%';S.querySelector('.pg').classList.toggle('done',!g);}
  try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}
  anim(tot);S.querySelector('.inv-pr').textContent=L.prt.replace('{n}',k).replace('{t}',fmt.format(tot))+' · '+new Date().toLocaleDateString(d.lang==='es'?'es-US':'en-US');}
 function anim(to){cancelAnimationFrame(raf);var from=shown,t0=performance.now(),dur=matchMedia('(prefers-reduced-motion: reduce)').matches?0:600;
@@ -40,9 +42,10 @@ function listText(){var lines=[],tot=0,k=0,ld=lead();lines.push(L.hi,'');
  return {txt:lines.join('\n'),tot:fmt.format(tot),ld:ld};}
 function fillEm(){var e=lead().email||'';S.querySelectorAll('.inv-em').forEach(function(i){if(!i.value)i.value=e;});}
 if(ty)new MutationObserver(function(){setTimeout(fillEm,0);}).observe(ty,{attributes:true,attributeFilter:['hidden']});fillEm();
+var MD=S.querySelector('.inv-mod');if(MD){MD.querySelector('.x').addEventListener('click',function(){MD.hidden=true;});MD.addEventListener('click',function(e){if(e.target===MD)MD.hidden=true;});}
 function ok(m){S.querySelectorAll('.inv-ok').forEach(function(p){p.textContent=m;p.hidden=false;});}
-S.querySelectorAll('.snd').forEach(function(b){b.addEventListener('click',function(){var lb=b.parentNode.querySelector('label.em'),inp=lb.querySelector('.inv-em');if(lb.hidden){lb.hidden=false;if(!inp.value)inp.value=lead().email||'';b.textContent=L.go;inp.focus();return;}var em=(inp.value||'').trim();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){inp.focus();ok(L.need);return;}var ld0=lead();ld0.email=em;try{localStorage.setItem(LK,JSON.stringify(ld0));}catch(e){}S.querySelectorAll('.inv-em').forEach(function(i){i.value=em;});var x=listText(),to=em,cc='cc='+encodeURIComponent(d.em)+'&';
- location.href='mailto:'+encodeURIComponent(to).replace('%40','@')+'?'+cc+'subject='+encodeURIComponent(L.subj.replace('{t}',x.tot))+'&body='+encodeURIComponent(x.txt);ok(L.sent);});});
+S.querySelectorAll('.snd').forEach(function(b){b.addEventListener('click',function(){var lb=b.parentNode.querySelector('label.em'),inp=lb.querySelector('.inv-em');if(lb.hidden){lb.hidden=false;if(!inp.value)inp.value=lead().email||'';b.textContent=L.go;inp.focus();return;}var em=(inp.value||'').trim();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){inp.focus();ok(L.need);return;}var ld0=lead();ld0.email=em;try{localStorage.setItem(LK,JSON.stringify(ld0));}catch(e){}S.querySelectorAll('.inv-em').forEach(function(i){i.value=em;});var x=listText(),to=em,cc='cc='+encodeURIComponent(d.em)+'&';var md=S.querySelector('.inv-mod');md.querySelector('.big').textContent=x.tot;md.querySelector('.msg').textContent=L.sent;md.hidden=false;md.querySelector('.x').focus();
+ location.href='mailto:'+encodeURIComponent(to).replace('%40','@')+'?'+cc+'subject='+encodeURIComponent(L.subj.replace('{t}',x.tot))+'&body='+encodeURIComponent(x.txt);ok(L.sent);S.querySelectorAll('.inv-top').forEach(function(t){t.querySelector('label.em').hidden=true;t.querySelector('.snd').textContent=L.send;t.querySelector('.inv-ok').hidden=true;});});});
 S.querySelectorAll('.sms2').forEach(function(b){b.addEventListener('click',function(){var x=listText(),ph=(x.ld.phone||'').replace(/[^\d+]/g,'');
  location.href='sms:'+ph+(/iP(hone|ad|od)/.test(navigator.userAgent)?'&':'?')+'body='+encodeURIComponent(L.subj.replace('{t}',x.tot)+'\n\n'+x.txt);ok(L.smsok);});});
 calc();

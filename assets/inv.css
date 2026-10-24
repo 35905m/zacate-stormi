@@ -1,5 +1,5 @@
 /* Tool Shield interactive inventory (shown after the lead form is submitted) */
-.inv{color:#111;margin:28px 0;border:3px solid #0b2545;border-radius:14px;background:#fff;overflow:hidden}
+.inv{color:#111;margin:28px 0;border:3px solid #0b2545;border-radius:14px;background:#fff;overflow:clip}
 .inv[hidden]{display:none}
 .inv-hd{background:#0b2545;color:#fff;padding:18px 16px;border-bottom:6px solid #ffc300}
 .inv-hd h2{margin:0 0 6px;font-size:1.35rem;line-height:1.2;color:#fff}.inv-hd p{margin:0;font-size:.95rem;opacity:.95}
@@ -34,3 +34,20 @@
 .inv-send .cta{background:#ffc300;color:#0b2545}.inv-send .sec{background:#0b2545;color:#fff}.inv-ok{flex-basis:100%;margin:4px 0 0;background:#e6f6ea;color:#14532d;border-radius:8px;padding:10px;font-weight:600}
 @media print{.inv-send{display:none!important}}html.inv-printing .inv-send{display:none!important}
 .inv-send label.em[hidden]{display:none}.inv-send label.em{flex-basis:100%;display:flex;flex-direction:column;font-weight:700;font-size:.9rem;color:#0b2545}.inv-send .inv-em{margin-top:4px;padding:12px;font-size:1rem;border:2px solid #0b2545;border-radius:10px;width:100%;box-sizing:border-box;color:#111;background:#fff}
+.inv-tot .inv-send.top{flex-basis:100%;padding:6px 0 0;gap:6px;align-items:center;border-top:1px solid rgba(11,37,69,.25);margin-top:4px}
+.inv-tot .gyl{font-weight:800;font-size:.95rem}.inv-tot .inv-send.top button{flex:1 1 auto;padding:9px 12px;font-size:.9rem;background:#0b2545;color:#fff}
+.inv-tot .inv-send.top .inv-em{padding:8px}.inv-tot .inv-ok{padding:6px 8px;font-size:.85rem}
+html.inv-printing .inv-tot .inv-send{display:none!important}
+.inv-tot{display:block;padding:8px 12px}.inv-tot .r1{display:flex;align-items:center;gap:8px}.inv-tot .tt{flex:1 1 auto;line-height:1.15}
+.inv-tot .tt .lbl{font-size:.8rem;font-weight:700}.inv-tot .tt .amt{font-size:1.45rem;display:inline-block}
+.inv-tot .inv-send.inv-top{flex:0 1 46%;flex-wrap:wrap;padding:0;gap:3px;border:0;margin:0}.inv-tot .inv-top .gyl{font-size:.72rem;font-weight:800;flex-basis:100%;text-align:center}
+.inv-tot .inv-top button{flex:1 1 100%;padding:7px 8px;font-size:.78rem;line-height:1.15;background:#0b2545;color:#fff;border:0;border-radius:8px;font-weight:800;cursor:pointer}
+.inv-tot .inv-top label.em{font-size:.75rem}.inv-tot .inv-top .inv-em{padding:7px;font-size:16px}
+.inv-tot .pg{height:8px;background:rgba(11,37,69,.18);border-radius:6px;margin:6px 0 3px;overflow:hidden}.inv-tot .pg i{display:block;height:100%;width:0;background:#0b2545;border-radius:6px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+.inv-tot .pg.done i{background:linear-gradient(90deg,#0b2545,#1f7a3a)}.inv-tot .cnt{display:block;font-size:.78rem;font-weight:600}
+.inv-mod{position:fixed;inset:0;z-index:50;background:rgba(11,37,69,.75);display:flex;align-items:center;justify-content:center;padding:20px}.inv-mod[hidden]{display:none}
+.inv-mod .box{background:#fff;color:#0b2545;border-radius:16px;padding:24px 20px;max-width:380px;width:100%;text-align:center;border:4px solid #ffc300;animation:invpop .35s ease}
+.inv-mod .big{font-size:2.6rem;font-weight:800;margin:0;font-variant-numeric:tabular-nums}.inv-mod .prot{font-size:1.15rem;font-weight:800;margin:6px 0 12px}.inv-mod .msg{font-size:.95rem;color:#14532d;background:#e6f6ea;border-radius:8px;padding:10px;margin:0 0 14px}
+.inv-mod .x{border:0;border-radius:10px;padding:12px 28px;font-weight:800;background:#ffc300;color:#0b2545;font-size:1rem;cursor:pointer}
+@keyframes invpop{from{transform:scale(.8);opacity:0}to{transform:none;opacity:1}}@media (prefers-reduced-motion:reduce){.inv-mod .box{animation:none}}
+html.inv-printing .inv-tot .pg,html.inv-printing .inv-mod{display:none!important}
